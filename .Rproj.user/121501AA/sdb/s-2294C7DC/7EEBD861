@@ -1,0 +1,17 @@
+{
+    "contents" : "path_rf=\"C:/Users/105067164/Desktop/Analytics/Getting Data/data\"\n#Read the Activity files\ndataActivityTest  <- read.table(file.path(path_rf, \"test\" , \"Y_test.txt\" ),header = FALSE)\ndataActivityTrain <- read.table(file.path(path_rf, \"train\", \"Y_train.txt\"),header = FALSE)\n\n#Read the Subject files\ndataSubjectTrain <- read.table(file.path(path_rf, \"train\", \"subject_train.txt\"),header = FALSE)\ndataSubjectTest  <- read.table(file.path(path_rf, \"test\" , \"subject_test.txt\"),header = FALSE)\n\n#Read Fearures files\ndataFeaturesTest  <- read.table(file.path(path_rf, \"test\" , \"X_test.txt\" ),header = FALSE)\ndataFeaturesTrain <- read.table(file.path(path_rf, \"train\", \"X_train.txt\"),header = FALSE)\n\n#Concatenate the data tables by rows\ndataSubject <- rbind(dataSubjectTrain, dataSubjectTest)\ndataActivity<- rbind(dataActivityTrain, dataActivityTest)\ndataFeatures<- rbind(dataFeaturesTrain, dataFeaturesTest)\n\n#Set names to variables\nnames(dataSubject)<-c(\"subject\")\nnames(dataActivity)<- c(\"activity\")\ndataFeaturesNames <- read.table(file.path(path_rf, \"features.txt\"),head=FALSE)\nnames(dataFeatures)<- dataFeaturesNames$V2\n\n#Merge columns to get the data frame Data for all data\ndataCombine <- cbind(dataSubject, dataActivity)\nData <- cbind(dataFeatures, dataCombine)\n\n#Subset Name of Features by measurements on the mean and standard deviation\nsubdataFeaturesNames<-dataFeaturesNames$V2[grep(\"mean\\\\(\\\\)|std\\\\(\\\\)\", dataFeaturesNames$V2)]\n\n#Subset the data frame Data by seleted names of Features\nselectedNames<-c(as.character(subdataFeaturesNames), \"subject\", \"activity\" )\nData<-subset(Data,select=selectedNames)\n\n#Read descriptive activity names from “activity_labels.txt”\nactivityLabels <- read.table(file.path(path_rf, \"activity_labels.txt\"),header = FALSE)\n\nnames(Data)<-gsub(\"^t\", \"time\", names(Data))\nnames(Data)<-gsub(\"^f\", \"frequency\", names(Data))\nnames(Data)<-gsub(\"Acc\", \"Accelerometer\", names(Data))\nnames(Data)<-gsub(\"Gyro\", \"Gyroscope\", names(Data))\nnames(Data)<-gsub(\"Mag\", \"Magnitude\", names(Data))\nnames(Data)<-gsub(\"BodyBody\", \"Body\", names(Data))\n\n#create independent tidy data from Step 4 set with average of each variable and each subject\nlibrary(plyr);\nData2<-aggregate(. ~subject + activity, Data, mean)\nData2<-Data2[order(Data2$subject,Data2$activity),]\nwrite.table(Data2, file = \"tidydata.txt\",row.name=FALSE)\n\n",
+    "created" : 1427020062369.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2104030443",
+    "id" : "7EEBD861",
+    "lastKnownWriteTime" : 1427068250,
+    "path" : "C:/Users/105067164/Desktop/Analytics/Getting Data/run_analysis.R",
+    "project_path" : "run_analysis.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
